@@ -38,7 +38,24 @@ public class MainActivity extends AppCompatActivity {
         contadorTxt.setText("" + tiempoRestante);
 
         generarNuevaPregunta();
+        new Thread(
+                () -> {
+                    while (tiempoRestante > 0) {
+                        tiempoRestante--;
+                        runOnUiThread(
+                                () -> {
+                                    contadorTxt.setText("" + tiempoRestante);
+                                }
+                        );
 
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        ).start();
 
         responder.setOnClickListener(
                 (view) -> {
@@ -56,9 +73,11 @@ public class MainActivity extends AppCompatActivity {
             puntaje += 5;
             puntajeText.setText("Puntaje: "+puntaje);
         }else{
-            Toast.makeText(this,"mal",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"incorrecto",Toast.LENGTH_SHORT).show();
+            puntaje -= 4;
+            puntajeText.setText("Puntaje: "+puntaje);
         }
-
+        generarNuevaPregunta();
     }
 
     public void generarNuevaPregunta(){
